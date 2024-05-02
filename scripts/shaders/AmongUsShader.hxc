@@ -1,0 +1,19 @@
+import flixel.addons.display.FlxRuntimeShader;
+import funkin.Paths;
+import openfl.utils.Assets;
+
+class AmongUsShader extends FlxRuntimeShader
+{
+	public function new()
+	{
+		var fragText:String = Assets.getText(Paths.frag('amongus'));
+		super(fragText);
+	}
+
+	function setColors():Void {
+    this.setFloatArray('uRed', [1, 0, 0]);
+    this.setFloatArray('uGreen', [0, 1, 0]);
+    this.setFloatArray('uBlue', [0, 0, 1]);
+    this.setFloatArray('uApply', [1]);
+	}
+}

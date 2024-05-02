@@ -1,0 +1,30 @@
+import flixel.addons.display.FlxRuntimeShader;
+import funkin.Paths;
+import openfl.utils.Assets;
+
+class NebulaShader extends FlxRuntimeShader
+{
+	var currentTime:Float = 0.0;
+
+	public function new()
+	{
+		var fragText:String = Assets.getText(Paths.frag('nebula'));
+		super(fragText);
+	}
+
+	function setTime(value:Float):Void
+	{
+		this.currentTime = value;
+		this.setFloat('iTime', this.currentTime);
+	}
+
+	public function update(elapsed:Float):Void
+	{
+		setTime(this.currentTime + elapsed);
+	}
+
+	public function reset()
+	{
+		setTime(0.0);
+	}
+}

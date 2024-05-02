@@ -1,0 +1,77 @@
+import flixel.addons.display.FlxRuntimeShader;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.sound.FlxSound;
+import funkin.graphics.FunkinSprite;
+import flixel.tweens.FlxTween;
+import funkin.Conductor;
+import funkin.ui.mainmenu.MainMenuState;
+import funkin.modding.base.ScriptedFlxRuntimeShader;
+import funkin.ui.MusicBeatState;
+import funkin.Paths;
+
+class CustomState extends MusicBeatState
+{
+	public function new()
+	{
+		super();
+	}
+
+	var catSprite:FlxSprite;
+	var background:FunkinSprite;
+
+	var lightShader:FlxRuntimeShader;
+
+	override function create() {
+		super.create();
+
+		FlxG.sound.music.pause();
+
+		background = new FunkinSprite(0, 0).makeSolidColor(1280, 720, 0xFFFFFFFF);
+		add(background);
+
+		lightShader = ScriptedFlxRuntimeShader.init('NebulaShader');
+
+		background.shader = lightShader;
+
+		catSprite = new FlxSprite(0, 0);
+		catSprite.frames = Paths.getSparrowAtlas("catvibe/crumb");
+		catSprite.animation.addByPrefix('idle', 'idle 0', 6, true);
+		catSprite.animation.play('idle');
+		catSprite.alpha = 0.0;
+
+		// Place the cat sprite in the center of the screen
+		catSprite.width = 256;
+		catSprite.height = 256;
+		catSprite.setGraphicSize(256, 256);
+		catSprite.x = FlxG.width / 2 - catSprite.width / 2;
+		catSprite.y = FlxG.height / 2 - catSprite.height / 2;
+
+		// Add the cat sprite to the state
+		add(catSprite);
+
+		// Fade the cat sprite in over 12.5 seconds
+		FlxTween.tween(catSprite, {alpha: 0.5}, 12.5, {ease: FlxTween.linear});
+
+		// Play the music
+		FlxG.sound.music = new FlxSound().loadEmbedded(Paths.music('catvibe/darkagedrop'), true, true);
+
+		FlxG.sound.music.volume = 0;
+		FlxG.sound.music.play();
+
+		FlxTween.tween(FlxG.sound.music, {volume: 1.0}, 2.5, {ease: FlxTween.linear});
+	}
+
+	override function update(elapsed:Float) {
+		super.update(elapsed);
+
+		var shaderInput:Float = elapsed * 2;
+		lightShader.scriptCall('update', [shaderInput]);
+
+		if (controls.BACK)
+		{
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.switchState(new MainMenuState());
+		}
+	}
+}
